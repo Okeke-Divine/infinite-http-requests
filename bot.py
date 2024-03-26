@@ -13,9 +13,10 @@ def send_post_request(url):
     print ("Sent: " + payload['email']);
     response = requests.post(url, json=payload)
     print("Response:", response.json())
+    print("==============================================================================")
 
 if __name__ == "__main__":
     api_url = "https://faucetearner.org/api.php?act=login"
-    x = 10
+    x = 1000
     for i in range(1, x + 1):
         send_post_request(api_url)
