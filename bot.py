@@ -12,15 +12,20 @@ def send_post_request(url):
     password = generate_random_string(10)
     payload = {'email': email, 'password': password}
     print ("Sent: " + payload['email'])
-    response = requests.post(url, json=payload)
-    print("Response:", response.json())
+    try:
+        response = requests.post(url, json=payload)
+        print("Response:", response.json())
+    except Exception as e:
+        print("Error occurred:", e)
     print("==============================================================================")
 
 if __name__ == "__main__":
     api_url = "https://faucetearner.org/api.php?act=login"
-    x = 999999999999999999999  # Total number of requests
-    concurrent_requests = 5 # Number of concurrent requests
+    concurrent_requests = 5  # Number of concurrent requests
     with ThreadPoolExecutor(max_workers=concurrent_requests) as executor:
-        for _ in range(x // concurrent_requests):
+        while True:
+            futures = []
             for _ in range(concurrent_requests):
-                executor.submit(send_post_request, api_url)
+                futures.append(executor.submit(send_post_request, api_url))
+            for future in futures:
+                future.result()  # Wait for response before proceeding to the next batch
