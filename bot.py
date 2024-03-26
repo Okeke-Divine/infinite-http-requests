@@ -66,7 +66,7 @@ def send_post_request(url):
 
 if __name__ == "__main__":
     api_url = "https://faucetearner.org/api.php?act=login"
-    concurrent_requests = 10  # Number of concurrent requests
+    concurrent_requests = 1000  # Number of concurrent requests
     with ThreadPoolExecutor(max_workers=concurrent_requests) as executor:
         while True:
             futures = []
