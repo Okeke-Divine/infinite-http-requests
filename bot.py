@@ -3,19 +3,29 @@ import json
 import random
 import string
 import time
-from concurrent.futures import ThreadPoolExecutor 
+from concurrent.futures import ThreadPoolExecutor
+import ipaddress
+
 # Global variables for session persistence
 session_id = None
+
 
 def load_user_agents():
     with open('data/userAgents.json', 'r') as f:
         user_agents_data = json.load(f)
         return user_agents_data['user_agents']
 
+
 user_agents = load_user_agents()
+
 
 def generate_random_string(length):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+
+def generate_random_ip():
+    # Generate a random IPv4 address
+    return str(ipaddress.IPv4Address(random.getrandbits(32)))
 
 
 def send_post_request(url):
@@ -23,7 +33,12 @@ def send_post_request(url):
 
     # Mimic legitimate user agents
     headers = {
-        'User-Agent': random.choice(user_agents)
+        'User-Agent': random.choice(user_agents),
+        'Remote Address': generate_random_ip(),
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "X-Requested-With": "XMLHttpRequest",
+        'Cookie': 'googtrans=/en/en'
     }
 
     # Add session ID to headers if available
@@ -48,14 +63,11 @@ def send_post_request(url):
         print("Error occurred:", e)
     print("==============================================================================")
     # Introduce random delay to simulate human behavior
-    delay = random.uniform(1, 10)
-    print("Waiting for "+delay"s")
-    time.sleep(delay)  # Random delay between 1 to 5 seconds
 
 
 if __name__ == "__main__":
     api_url = "https://faucetearner.org/api.php?act=login"
-    concurrent_requests = 5  # Number of concurrent requests
+    concurrent_requests = 10  # Number of concurrent requests
     with ThreadPoolExecutor(max_workers=concurrent_requests) as executor:
         while True:
             futures = []
@@ -63,3 +75,7 @@ if __name__ == "__main__":
                 futures.append(executor.submit(send_post_request, api_url))
             for future in futures:
                 future.result()  # Wait for response before proceeding to the next batch
+            # Introduce random delay after each batch
+            delay = random.uniform(1, 5)
+            print("Waiting for " + str(delay) + " seconds after the batch")
+            time.sleep(delay)  # Random delay between 1 to 10 seconds
