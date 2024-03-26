@@ -1,13 +1,20 @@
 import requests
+import json
+import random
+import string
 
-def send_requests(url, num_requests):
-    for i in range(1, num_requests + 1):
-        response = requests.get(url)
-        print(f"{i}: {response}")
+def generate_random_string(length):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
+def send_post_request(url):
+    email = generate_random_string(8) + "@faucetearner.org"
+    password = generate_random_string(10)
+    payload = {'email': email, 'password': password}
+    print ("Sent: " + payload['email']);
+    response = requests.post(url, json=payload)
+    print("Response:", response.json())
 
 if __name__ == "__main__":
-    url = "https://faucetearner.org/api.php?act=login"
-    url = "http://locahost:8000"
+    api_url = "https://faucetearner.org/api.php?act=login"
     x = 10
-    send_requests(url, x)
+    send_post_request(api_url)
