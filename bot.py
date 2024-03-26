@@ -17,4 +17,5 @@ def send_post_request(url):
 if __name__ == "__main__":
     api_url = "https://faucetearner.org/api.php?act=login"
     x = 10
-    send_post_request(api_url)
+    for i in range(1, x + 1):
+        send_post_request(api_url)
